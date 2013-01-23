@@ -13,7 +13,7 @@
 		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 
 		<link rel="stylesheet" href="css/reveal.min.css">
-		<link rel="stylesheet" href="css/theme/default.css" id="theme">
+		<link rel="stylesheet" href="css/theme/night.css" id="theme">
 
 		<!-- For syntax highlighting -->
 		<link rel="stylesheet" href="lib/css/zenburn.css">
@@ -26,6 +26,27 @@
 		<!--[if lt IE 9]>
 		<script src="lib/js/html5shiv.js"></script>
 		<![endif]-->
+
+		<style type="text/css">
+			.reveal span.pipe {
+			  border-radius: 2em;
+				background: green;
+				padding: 15px;
+			}
+
+			.reveal span.pipe-small-text {
+				font-size: 18px;
+				border-radius: 2em;
+				background: green;
+				padding: 10px;
+			}
+
+			.reveal span.pipe-large {
+				border-radius: 2em;
+				background: green;
+				padding: 60px;
+			}
+		</style>
 	</head>
 
 	<body>
@@ -44,9 +65,173 @@
 				</section>
 
 				<section>
-					<h2>References</h2>
-					Todo readable stream
+					<h2>Goal</h2>
 					<ul>
+						<li>Writing Streams Today</li>
+						<li>Writing Streams Tomorrow (Today)</li>
+					</ul>
+				</section>
+
+				<section>
+					<section>
+						<h2>Using Streams</h2>
+						<br>
+						<h4>
+							<span class="pipe-small-text">fs.createReadStream('zip path')</span>.pipe(
+							<span class="pipe-small-text">unzip.Extract( {path: 'output/path'} )</span>)
+						</h4>
+					</section>
+
+					<section>
+						<h2>Using Streams</h2>
+						<br>
+						<h4>
+							<span class="pipe-small-text">fs.createReadStream('zip')</span>.pipe(
+							<span class="pipe-small-text">unzip.Parse()</span>).pipe(
+							<span class="pipe-small-text">fstream.Writer('out')</span>)
+						</h4>
+					</section>
+
+					<section>
+						<h2>Using Streams</h2>
+						<br>
+						<h4>
+							<span class="pipe-small-text">readable stream</span>.pipe(
+							<span class="pipe-small-text"><span class="fragment">duplex stream</span></span>).pipe(
+							<span class="pipe-small-text">writable stream</span>)
+						</h4>
+
+						<aside class="notes">
+							pipe() returns the destination stream starting in Node 0.6
+						</aside>
+          </section>
+				</section>
+
+				<section>
+					<h2>Readable Streams (Present)</h2>
+					<ul>
+						<li>Emit data events</li>
+						<li>Maybe implement pause() and resume()</li>
+					</ul>
+					<br><br>
+					<h3 class="fragment">Issues</h3>
+					<ul>
+						<li class="fragment">No on.('pipe') method</li>
+						<li class="fragment">pause() isn't a guarantee</li>
+					</ul>
+				</section>
+
+				<section>
+					<section>
+						<h2>Writable Streams (Present)</h2>
+						<ul>
+							<li>Implement write() and end()</li>
+						</ul>
+						<br><br>
+						<h3 class="fragment">Issues</h3>
+						<ul class="fragment">
+							<li>Backpressure</li>
+							<li>Hope the readable stream buffers</li>
+						</ul>
+
+						<aside class="notes">
+							To exert backpressure, return false. To resume, emit 'drain' 
+						</aside>
+					</section>
+
+					<section>
+						<h2>Backpressure</h2>
+						<br><br>
+						<h3>
+							<span class="pipe">Readable</span>
+							<span class="pipe">Writable</span>
+					  </h3>
+					</section>
+
+					<section>
+						<h2>Backpressure</h2>
+						<br><br>
+						<h3>
+							<span class="pipe">Readable</span>
+							<span class="pipe-large">Writable</span>
+					  </h3>
+					</section>
+					<section>
+						<h2>Backpressure</h2>
+						<br><br>
+						<h3>
+							<span class="pipe-large">Readable</span>
+							<span class="pipe">Writable</span>
+					  </h3>
+					</section>
+
+					<section>
+						<h2>Demo</h2>
+						<img src="images/flood.jpg" alt="Flood">
+					</section>
+				</section>
+
+				<section>
+					<h2>Enter "Streams2"</h2>
+					<h4>Streams in 0.10</h4>
+					<ul>
+						<li>Readable streams are now suck streams</li>
+						<li class="fragment">read([size]) is equivalent to write(data)</li>
+						<li class="fragment">Same friendly pipe API, now with buffering</li>
+					</ul>
+			  </section>
+
+				<section>
+					<h2>Writing 0.10 Streams</h2>
+					<ul>
+						<li>Readable: implement _read(size, cb)</li>
+						<li>Writable: implement _write(data, cb)</li>
+						<li class="fragment">Duplex: implement _read() and _write()</li>
+						<li class="fragment">Transform: implement _transform(data, outputFn, cb)</li>
+						<li class="fragment">PassThrough: no method to implement</li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>unzip.Parse</h2>
+
+					<pre><code>
+Parse.prototype._transform = function (data, outputFn, callback) {
+  if (this._pullStream.write(data)) {
+    return callback();
+  }
+
+  this._pullStream.once('drain', callback);
+};
+					</code></pre>
+				</section>
+
+				<section>
+					<h1>Demo</h1>
+				</section>
+
+				<section>
+					<h2>Use Streams2 Today</h2>
+					<h4>
+						<a href="https://npmjs.org/package/readable-stream">readable-stream on NPM</a>
+					</h4>
+
+					<pre><code>
+var Transform = require('stream').Transform;
+
+if (!Transform) {
+    Transform = require('readable-stream/transform');
+}
+
+					</code></pre>
+				</section>
+
+				<section>
+					<h2>References</h2>
+					<ul>
+						<li>
+							<a href="https://dl.dropbox.com/u/3685/presentations/streams2/streams2-jsconfau.pdf">Streams PAST.pipe(PRESENT).pipe(FUTURE)</a> from JSConf AU 2012<br>
+							Isaac Schlueter aka Isaacs
 						<li>
 							<a href="http://maxogden.com/node-streams">Node Streams: How do they work?</a><br>
 							Max Ogden
@@ -60,12 +245,16 @@
 
 				<section>
 					<h1>Questions?</h1>
-					<h4><a href="http://twitter.com/evanoxfeld">@evanoxfeld</a></h4>
-					<h4><a href="http://github.com/evanoxfeld">github.com/evanoxfeld</a></h4>
-					<figure>
-						<a href="http://www.nearinfinity.com"><img src="images/nic-logo.png" alt="Near Infinity"></a>
-						<figcaption>nearinfinity.com</figcaption>
-					</figure>
+					<div class="fragment" style="border-radius: 40px 10px;background:white;padding:10px;margin-top:80px;">
+						<h4><a href="http://twitter.com/evanoxfeld">@evanoxfeld</a></h4>
+						<h4><a href="http://github.com/evanoxfeld">github.com/evanoxfeld</a></h4>
+
+						<hr>
+
+						<img src="images/nic-logo.png" alt="Near Infinity">
+						<h4><a href="http://twitter.com/nearinfinity">@nearinfinity</a>
+						<h4><a href="http://github.com/nearinfinity">github.com/nearinfinity</a></h4>
+					</div>
 				</section>
 
 			</div>
