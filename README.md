@@ -1,6 +1,27 @@
 # nodedc-streams-presentation
 
-Writing Streaming Libraries with Streams
+These are the slides from my NodeJS Streams talk at 
+[NodeDC](http://nodedc.github.com/) on 1/23/2013. I covered writing
+Streams using today's API in Node 0.8 and tomorrow's API coming in 0.10,
+as well as how and why you should use tomorrow's Streams API today. I
+also explored some of the conceptual underpinnings required to solve
+streaming problems, including buffering and backpressure.
+
+## View the Slides
+
+http://evanoxfeld.github.com/nodedc-streams-presentation
+
+## Node Modules Referenced
+The unzip and pullstream modules are streaming libraries that have
+been updated for the 0.10 Streams API found in the
+[readable-stream](https://github.com/isaacs/readable-stream)
+module. Install unzip and pullstream using NPM or see the links to the
+source code below:
+
+* [unzip](https://github.com/nearinfinity/node-unzip)
+* [pullstream](https://github.com/nearinfinity/node-pullstream)
+
+Note: Node 0.9 compatibility is imminent.
 
 ## Reveal.js
 
