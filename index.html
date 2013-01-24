@@ -57,6 +57,7 @@
 			<div class="slides">
 
 				<section>
+					<img src="images/nodejs-light.png" alt="nodejs logo">
 					<h1>Streams</h1>
 					<h3>Writing Streaming Libraries</h3>
 					<p>
@@ -131,7 +132,7 @@
 						<h3 class="fragment">Issues</h3>
 						<ul class="fragment">
 							<li>Backpressure</li>
-							<li>Hope the readable stream buffers</li>
+							<li>Hope the source stream buffers</li>
 						</ul>
 
 						<aside class="notes">
@@ -177,7 +178,12 @@
 					<ul>
 						<li>Readable streams are now suck streams</li>
 						<li class="fragment">read([size]) is equivalent to write(data)</li>
-						<li class="fragment">Same friendly pipe API, now with buffering</li>
+						<ul class="fragment">
+							<li>read() returns null if less data is buffered than size</li>
+							<li>write() continues to return false if the buffer is full</li>
+						</ul>
+						<li class="fragment">Can use Readable to wrap old-style streams</li>
+						<li class="fragment">Same friendly pipe API</li>
 					</ul>
 			  </section>
 
@@ -227,6 +233,8 @@ if (!Transform) {
 				</section>
 
 				<section>
+					@substack<blockquote cite="https://github.com/substack/stream-handbook#why-you-should-use-streams">Streams make programming in node simple, elegant, and composable.</blockquote>
+					<br>
 					<h2>References</h2>
 					<ul>
 						<li>
