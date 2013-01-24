@@ -1,0 +1,303 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>Writing Streaming Libraries with Streams</title>
+
+		<meta name="description" content="A framework for easily creating beautiful presentations using HTML">
+		<meta name="author" content="Evan Oxfeld">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<link rel="stylesheet" href="css/reveal.min.css">
+		<link rel="stylesheet" href="css/theme/night.css" id="theme">
+
+		<!-- For syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- If the query includes 'print-pdf', use the PDF print sheet -->
+		<script>
+			document.write( '<link rel="stylesheet" href="css/print/' + ( window.location.search.match( /print-pdf/gi ) ? 'pdf' : 'paper' ) + '.css" type="text/css" media="print">' );
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+
+		<style type="text/css">
+			.reveal span.pipe {
+			  border-radius: 2em;
+				background: green;
+				padding: 15px;
+			}
+
+			.reveal span.pipe-small-text {
+				font-size: 18px;
+				border-radius: 2em;
+				background: green;
+				padding: 10px;
+			}
+
+			.reveal span.pipe-large {
+				border-radius: 2em;
+				background: green;
+				padding: 60px;
+			}
+		</style>
+	</head>
+
+	<body>
+
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+
+				<section>
+					<img src="images/nodejs-light.png" alt="nodejs logo">
+					<h1>Streams</h1>
+					<h3>Writing Streaming Libraries</h3>
+					<p>
+						<small>Created by Evan Oxfeld / <a href="http://twitter.com/evanoxfeld">@evanoxfeld</a></small>
+					</p>
+				</section>
+
+				<section>
+					<h2>Goal</h2>
+					<ul>
+						<li>Writing Streams Today</li>
+						<li>Writing Streams Tomorrow (Today)</li>
+					</ul>
+				</section>
+
+				<section>
+					<section>
+						<h2>Using Streams</h2>
+						<br>
+						<h4>
+							<span class="pipe-small-text">fs.createReadStream('zip path')</span>.pipe(
+							<span class="pipe-small-text">unzip.Extract( {path: 'output/path'} )</span>)
+						</h4>
+					</section>
+
+					<section>
+						<h2>Using Streams</h2>
+						<br>
+						<h4>
+							<span class="pipe-small-text">fs.createReadStream('zip')</span>.pipe(
+							<span class="pipe-small-text">unzip.Parse()</span>).pipe(
+							<span class="pipe-small-text">fstream.Writer('out')</span>)
+						</h4>
+					</section>
+
+					<section>
+						<h2>Using Streams</h2>
+						<br>
+						<h4>
+							<span class="pipe-small-text">readable stream</span>.pipe(
+							<span class="pipe-small-text"><span class="fragment">duplex stream</span></span>).pipe(
+							<span class="pipe-small-text">writable stream</span>)
+						</h4>
+
+						<aside class="notes">
+							pipe() returns the destination stream starting in Node 0.6
+						</aside>
+          </section>
+				</section>
+
+				<section>
+					<h2>Readable Streams (Present)</h2>
+					<ul>
+						<li>Emit data events</li>
+						<li>Maybe implement pause() and resume()</li>
+					</ul>
+					<br><br>
+					<h3 class="fragment">Issues</h3>
+					<ul>
+						<li class="fragment">No on.('pipe') method</li>
+						<li class="fragment">pause() isn't a guarantee</li>
+					</ul>
+				</section>
+
+				<section>
+					<section>
+						<h2>Writable Streams (Present)</h2>
+						<ul>
+							<li>Implement write() and end()</li>
+						</ul>
+						<br><br>
+						<h3 class="fragment">Issues</h3>
+						<ul class="fragment">
+							<li>Backpressure</li>
+							<li>Hope the source stream buffers</li>
+						</ul>
+
+						<aside class="notes">
+							To exert backpressure, return false. To resume, emit 'drain' 
+						</aside>
+					</section>
+
+					<section>
+						<h2>Backpressure</h2>
+						<br><br>
+						<h3>
+							<span class="pipe">Readable</span>
+							<span class="pipe">Writable</span>
+					  </h3>
+					</section>
+
+					<section>
+						<h2>Backpressure</h2>
+						<br><br>
+						<h3>
+							<span class="pipe">Readable</span>
+							<span class="pipe-large">Writable</span>
+					  </h3>
+					</section>
+					<section>
+						<h2>Backpressure</h2>
+						<br><br>
+						<h3>
+							<span class="pipe-large">Readable</span>
+							<span class="pipe">Writable</span>
+					  </h3>
+					</section>
+
+					<section>
+						<h2>Demo</h2>
+						<img src="images/flood.jpg" alt="Flood">
+					</section>
+				</section>
+
+				<section>
+					<h2>Enter "Streams2"</h2>
+					<h4>Streams in 0.10</h4>
+					<ul>
+						<li>Readable streams are now suck streams</li>
+						<li class="fragment">read([size]) is equivalent to write(data)</li>
+						<ul class="fragment">
+							<li>read() returns null if less data is buffered than size</li>
+							<li>write() continues to return false if the buffer is full</li>
+						</ul>
+						<li class="fragment">Can use Readable to wrap old-style streams</li>
+						<li class="fragment">Same friendly pipe API</li>
+					</ul>
+			  </section>
+
+				<section>
+					<h2>Writing 0.10 Streams</h2>
+					<ul>
+						<li>Readable: implement _read(size, cb)</li>
+						<li>Writable: implement _write(data, cb)</li>
+						<li class="fragment">Duplex: implement _read() and _write()</li>
+						<li class="fragment">Transform: implement _transform(data, outputFn, cb)</li>
+						<li class="fragment">PassThrough: no method to implement</li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>unzip.Parse</h2>
+
+					<pre><code>
+Parse.prototype._transform = function (data, outputFn, callback) {
+  if (this._pullStream.write(data)) {
+    return callback();
+  }
+
+  this._pullStream.once('drain', callback);
+};
+					</code></pre>
+				</section>
+
+				<section>
+					<h1>Demo</h1>
+				</section>
+
+				<section>
+					<h2>Use Streams2 Today</h2>
+					<h4>
+						<a href="https://npmjs.org/package/readable-stream">readable-stream on NPM</a>
+					</h4>
+
+					<pre><code>
+var Transform = require('stream').Transform;
+
+if (!Transform) {
+    Transform = require('readable-stream/transform');
+}
+
+					</code></pre>
+				</section>
+
+				<section>
+					@substack<blockquote cite="https://github.com/substack/stream-handbook#why-you-should-use-streams">Streams make programming in node simple, elegant, and composable.</blockquote>
+					<br>
+					<h2>References</h2>
+					<ul>
+						<li>
+							<a href="https://dl.dropbox.com/u/3685/presentations/streams2/streams2-jsconfau.pdf">Streams PAST.pipe(PRESENT).pipe(FUTURE)</a> from JSConf AU 2012<br>
+							Isaac Schlueter aka Isaacs
+						<li>
+							<a href="http://maxogden.com/node-streams">Node Streams: How do they work?</a><br>
+							Max Ogden
+						</li>
+						<li>
+							<a href="https://github.com/substack/stream-handbook">Stream Handbook</a><br>
+							Substack
+						</li>
+					</ul>
+				</section>
+
+				<section>
+					<h1>Questions?</h1>
+					<div class="fragment" style="border-radius: 40px 10px;background:white;padding:10px;margin-top:80px;">
+						<h4><a href="http://twitter.com/evanoxfeld">@evanoxfeld</a></h4>
+						<h4><a href="http://github.com/evanoxfeld">github.com/evanoxfeld</a></h4>
+
+						<hr>
+
+						<img src="images/nic-logo.png" alt="Near Infinity">
+						<h4><a href="http://twitter.com/nearinfinity">@nearinfinity</a>
+						<h4><a href="http://github.com/nearinfinity">github.com/nearinfinity</a></h4>
+					</div>
+				</section>
+
+			</div>
+
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.min.js"></script>
+
+		<script>
+
+			// Full list of configuration options available here:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+
+				theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+				transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+
+				// Optional libraries used to extend on reveal.js
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/showdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+					{ src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+					// { src: 'plugin/remotes/remotes.js', async: true, condition: function() { return !!document.body.classList; } }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>
