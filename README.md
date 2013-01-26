@@ -13,15 +13,13 @@ http://evanoxfeld.github.com/nodedc-streams-presentation
 
 ## Node Modules Referenced
 The unzip and pullstream modules are streaming libraries that have
-been updated for the 0.10 Streams API found in the
+been updated for the 0.10 Streams API  also found in the
 [readable-stream](https://github.com/isaacs/readable-stream)
 module. Install unzip and pullstream using NPM or see the links to the
 source code below:
 
 * [unzip](https://github.com/nearinfinity/node-unzip)
 * [pullstream](https://github.com/nearinfinity/node-pullstream)
-
-Note: Node 0.9 compatibility is imminent.
 
 ## Reveal.js
 
