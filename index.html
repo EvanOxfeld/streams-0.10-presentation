@@ -58,58 +58,97 @@
 
 				<section>
 					<img src="images/nodejs-light.png" alt="nodejs logo">
-					<h1>Streams</h1>
-					<h3>Writing Streaming Libraries</h3>
+					<h2>Solving I/O Bound Problems with Streams</h2>
+					<h4>Todo: Upgrade reveal?</h4>
 					<p>
 						<small>Created by Evan Oxfeld / <a href="http://twitter.com/evanoxfeld">@evanoxfeld</a></small>
 					</p>
+
+					<aside class="notes" data-markdown>
+						## I/O bound problems
+
+						* Show of hands if your project's using a slow interface
+						    * E.g. database, LDAP, REST call, call to ext. service
+						* You're reading from / writing to slow interfaces
+						* I/O bound if the interfaces, not the CPU, not memory
+						  constrains the problem
+
+						## NodeJS
+						* Server-side JS platform built on Chrome's V8 engine
+						* Easily build fast, scalable network applications
+					  * Event-driven, non-blocking	
+					</aside>
 				</section>
 
 				<section>
-					<h2>Goal</h2>
+					<h2>Overview</h2>
 					<ul>
-						<li>Writing Streams Today</li>
-						<li>Writing Streams Tomorrow (Today)</li>
+						<li>Explore event-driven programming</li>
+						<li>Explore Streams API</li>
 					</ul>
 				</section>
 
 				<section>
-					<section>
-						<h2>Using Streams</h2>
-						<br>
-						<h4>
-							<span class="pipe-small-text">fs.createReadStream('zip path')</span>.pipe(
-							<span class="pipe-small-text">unzip.Extract( {path: 'output/path'} )</span>)
-						</h4>
-					</section>
+					<h2>Todo - Echo Server or Example Web Server</h2>
 
-					<section>
-						<h2>Using Streams</h2>
-						<br>
-						<h4>
-							<span class="pipe-small-text">fs.createReadStream('zip')</span>.pipe(
-							<span class="pipe-small-text">unzip.Parse()</span>).pipe(
-							<span class="pipe-small-text">fstream.Writer('out')</span>)
-						</h4>
-					</section>
+					<pre><code>
+var http = require('http');
+http.createServer(function (req, res) {
+res.writeHead(200, {'Content-Type': 'text/plain'});
+res.end('Hello NIC/Invertix\n');
+}).listen(1337, '127.0.0.1');
+					</pre></code>
+				</section>
 
-					<section>
-						<h2>Using Streams</h2>
-						<br>
-						<h4>
-							<span class="pipe-small-text">readable stream</span>.pipe(
-							<span class="pipe-small-text"><span class="fragment">duplex stream</span></span>).pipe(
-							<span class="pipe-small-text">writable stream</span>)
-						</h4>
+				<section data-markdown>
+					## util.pump
 
-						<aside class="notes">
-							pipe() returns the destination stream starting in Node 0.6
-						</aside>
-          </section>
+					```
+					util.pump(readable, writable)
+					```
 				</section>
 
 				<section>
-					<h2>Readable Streams (Present)</h2>
+					<section data-markdown>
+						## Solve unzip with util.pump
+
+						#### The Problem
+						* Read zip file from disk
+						* Parse the contents and inflate compressed data
+						* Write data to disk
+					</section>
+
+					<section data-markdown>
+						## Solve Unzip with util.pump
+
+						#### The Issues
+					</section>
+				</section>
+
+				<section>
+					<section data-markdown>
+						## Enter Streams
+
+						#### Stream API Today (0.6/0.8)
+
+					</section>
+
+					<section data-markdown>
+						## Enter Streams
+
+						#### Unzip Revisited
+
+					</section>
+
+					<section data-markdown>
+						## Enter Streams
+
+						### Demo Unzip
+					</section>
+				</section>
+
+				<section>
+					<h2>Present Issues - Readable Streams</h2>
 					<ul>
 						<li>Emit data events</li>
 						<li>Maybe implement pause() and resume()</li>
@@ -123,53 +162,20 @@
 				</section>
 
 				<section>
-					<section>
-						<h2>Writable Streams (Present)</h2>
-						<ul>
-							<li>Implement write() and end()</li>
-						</ul>
-						<br><br>
-						<h3 class="fragment">Issues</h3>
-						<ul class="fragment">
-							<li>Backpressure</li>
-							<li>Hope the source stream buffers</li>
-						</ul>
+					<h2>Present Issues - Writable Streams</h2>
+					<ul>
+						<li>Implement write() and end()</li>
+					</ul>
+					<br><br>
+					<h3 class="fragment">Issues</h3>
+					<ul class="fragment">
+						<li>Backpressure</li>
+						<li>Hope the source stream buffers</li>
+					</ul>
 
-						<aside class="notes">
-							To exert backpressure, return false. To resume, emit 'drain' 
-						</aside>
-					</section>
-
-					<section>
-						<h2>Backpressure</h2>
-						<br><br>
-						<h3>
-							<span class="pipe">Readable</span>
-							<span class="pipe">Writable</span>
-					  </h3>
-					</section>
-
-					<section>
-						<h2>Backpressure</h2>
-						<br><br>
-						<h3>
-							<span class="pipe">Readable</span>
-							<span class="pipe-large">Writable</span>
-					  </h3>
-					</section>
-					<section>
-						<h2>Backpressure</h2>
-						<br><br>
-						<h3>
-							<span class="pipe-large">Readable</span>
-							<span class="pipe">Writable</span>
-					  </h3>
-					</section>
-
-					<section>
-						<h2>Demo</h2>
-						<img src="images/flood.jpg" alt="Flood">
-					</section>
+					<aside class="notes">
+						To exert backpressure, return false. To resume, emit 'drain' 
+					</aside>
 				</section>
 
 				<section>
@@ -212,8 +218,26 @@ Parse.prototype._transform = function (data, outputFn, callback) {
 					</code></pre>
 				</section>
 
+				<section data-markdown>
+					## until-stream
+				</section>
+
 				<section>
-					<h1>Demo</h1>
+					<h1>Unzip Demo</h1>
+				</section>
+
+				<section data-markdown>
+					## Streams in Rails
+
+					* Buffers more efficient?
+				</section>
+
+				<section data-markdown>
+					## Recap
+
+					* Stream API is great for solving I/O bound problems
+					* Other platforms and frameworks solve I/O bound problems
+					  less well
 				</section>
 
 				<section>
@@ -231,6 +255,80 @@ if (!Transform) {
 
 					</code></pre>
 				</section>
+
+
+
+
+
+				<section>
+					<section>
+						<h2>Backup Content - Using Streams</h2>
+						<br>
+						<h4>
+							<span class="pipe-small-text">fs.createReadStream('zip path')</span>.pipe(
+							<span class="pipe-small-text">unzip.Extract( {path: 'output/path'} )</span>)
+						</h4>
+					</section>
+
+					<section>
+						<h2>Using Streams</h2>
+						<br>
+						<h4>
+							<span class="pipe-small-text">fs.createReadStream('zip')</span>.pipe(
+							<span class="pipe-small-text">unzip.Parse()</span>).pipe(
+							<span class="pipe-small-text">fstream.Writer('out')</span>)
+						</h4>
+					</section>
+
+					<section>
+						<h2>Using Streams</h2>
+						<br>
+						<h4>
+							<span class="pipe-small-text">readable stream</span>.pipe(
+							<span class="pipe-small-text"><span class="fragment">duplex stream</span></span>).pipe(
+							<span class="pipe-small-text">writable stream</span>)
+						</h4>
+
+						<aside class="notes">
+							pipe() returns the destination stream starting in Node 0.6
+						</aside>
+          </section>
+				</section>
+
+
+					<section>
+						<h2>Backpressure</h2>
+						<br><br>
+						<h3>
+							<span class="pipe">Readable</span>
+							<span class="pipe">Writable</span>
+					  </h3>
+					</section>
+
+					<section>
+						<h2>Backpressure</h2>
+						<br><br>
+						<h3>
+							<span class="pipe">Readable</span>
+							<span class="pipe-large">Writable</span>
+					  </h3>
+					</section>
+					<section>
+						<h2>Backpressure</h2>
+						<br><br>
+						<h3>
+							<span class="pipe-large">Readable</span>
+							<span class="pipe">Writable</span>
+					  </h3>
+					</section>
+
+					<section>
+						<h2>Demo</h2>
+						<img src="images/flood.jpg" alt="Flood">
+					</section>
+				</section>
+
+
 
 				<section>
 					@substack<blockquote cite="https://github.com/substack/stream-handbook#why-you-should-use-streams">Streams make programming in node simple, elegant, and composable.</blockquote>
