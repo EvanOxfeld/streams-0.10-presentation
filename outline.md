@@ -7,12 +7,15 @@
 * Learn to write Streams
 
 ## Outline
-* What is NodeJS?
-    * Break down nodejs.org definition
 * What is an I/O bound problem?
-    * Code example of buffering data w/o Streams
-    * Socket communication w/o socket.pipe(socket)
-    * Is there a good abstraction for the on 'data' pattern?
+* What is NodeJS?
+* Overview - Explore this class of problem in NodeJS
+* Event-driven programming
+    * Code example - synchronous read (e.g. a whole file)
+    * Code example - Event Emitter w/ on 'data'
+    * Echo TCP server w/o socket.pipe(socket)
+    * Build up echo server, introduce buffering & backpressure
+    * How did Node solve the on 'data' pattern? 
 * Streams with util.pump
     * Code example
     * Issues
