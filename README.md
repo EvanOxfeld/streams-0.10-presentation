@@ -1,7 +1,7 @@
 # nic-streams-presentation
 
 These are the slides from my NodeJS Streams talk at 
-[@NearInfinity](http://twitter.com/nearinfinity) on 3/6/2013.
+[@NearInfinity](http://twitter.com/nearinfinity) / [@Invertix](http://twitter.com/Invertix) on 3/13/2013.
 
 ## Reveal.js
 
