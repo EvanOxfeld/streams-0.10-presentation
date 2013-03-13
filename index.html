@@ -109,9 +109,13 @@ fs.createReadStream('path/to/archive.zip')
 					</aside>
 				</section>
 
-				<section data-markdown>
-					# Code!
-					### Behind the curtain
+				<section>
+					<h1>Code!</h1>
+					<h3>Behind the curtain</h3>
+
+					<aside class="notes">
+						Stream in node 0.8 inherits from EventEmitter
+					</aside>
 				</section>
 
 				<section data-markdown>
@@ -228,8 +232,9 @@ fs.createReadStream('path/to/archive.zip')
 						<li class="fragment">Shared base classes for backpressure and buffering</li>
 					</ul>
 
-					<aside class="notes">
-						highWaterMark option (16kb default) determines how much data is buffered
+					<aside class="notes" data-markdown>
+						* Readable/writable/duplex was one base class in Node 0.8
+						* highWaterMark option (16kb default) determines how much data is buffered
 					</aside>
 			  </section>
 
