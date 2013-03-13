@@ -10,19 +10,15 @@
 * What is NodeJS?
 * What is an I/O bound problem?
 * Overview - Explore this class of problem in NodeJS
-
-* Streams - No magic (??Behind the curtain??)
+* Streams - No magic
     * Code example - unzip stream.pipe
-				* Show how _using_ Streams is _easy_
-				* Define types of Streams here?
+				* Define types of Streams
 				* Compare to unix pipes
-        * Some kind of demo?
     * Code examples - build up to what stream.pipe does for you
 				* Synchronous read (e.g. a whole file)
         * Async
         * Event Emitter w/ on 'data'
             * Event emitter / on 'data' pattern across node versions
-
 * How did Node get from emitting 'data' events to Streams?
     * Buffering & backpressure
     * util.pump & its issues
@@ -38,8 +34,6 @@
     * Duplex, Transform, PassThrough
     * Demo lastest unzip
     * MatchStream
-        * Live code using new unshift() method??
-* Streams in Rails?
 * Conclusion
 * References
 
