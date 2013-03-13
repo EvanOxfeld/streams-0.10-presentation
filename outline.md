@@ -7,31 +7,37 @@
 * Learn to write Streams
 
 ## Outline
-* What is an I/O bound problem?
 * What is NodeJS?
+* What is an I/O bound problem?
 * Overview - Explore this class of problem in NodeJS
-* Event-driven programming
-    * Code example - synchronous read (e.g. a whole file)
-    * Code example - Event Emitter w/ on 'data'
-    * Echo TCP server w/o socket.pipe(socket)
-    * Build up echo server, introduce buffering & backpressure
-    * How did Node solve the on 'data' pattern? 
-* Streams with util.pump
-    * Code example
-    * Issues
-* Streams with .pipe()
-    * Show how _using_ Streams is _easy_
-        * Define types of Streams here?
-    * Compare to unix pipes
-    * Simple demo using core streams?
-* Problems with Streams today
+
+* Streams - No magic (??Behind the curtain??)
+    * Code example - unzip stream.pipe
+				* Show how _using_ Streams is _easy_
+				* Define types of Streams here?
+				* Compare to unix pipes
+        * Some kind of demo?
+    * Code examples - build up to what stream.pipe does for you
+				* Synchronous read (e.g. a whole file)
+        * Async
+        * Event Emitter w/ on 'data'
+            * Event emitter / on 'data' pattern across node versions
+
+* How did Node get from emitting 'data' events to Streams?
+    * Buffering & backpressure
+    * util.pump & its issues
+        * Other events e.g. error, no customization, limited API
+    * Show unzip stream.pipe again
+        * API - r.pause(), r.resume(), r.emit(end)
+        * API - w.write() return false until buffer flushed, w.on('drain')
+* Problems with Streams in Node 0.8
     * Demo old unzip
     * Explore buffering, back-pressure, and spew streams
-* Streams Tomorrow, Today
+* Streams of Tomorrow Finally Here
     * Changes to stream.Readable & stream.Writable
     * Duplex, Transform, PassThrough
-    * Demo unzip with readable-stream / v0.9
-    * UntilStream
+    * Demo lastest unzip
+    * MatchStream
         * Live code using new unshift() method??
 * Streams in Rails?
 * Conclusion
