@@ -59,177 +59,207 @@
 				<section>
 					<img src="images/nodejs-light.png" alt="nodejs logo">
 					<h1>Streams</h1>
-					<h3>Writing Streaming Libraries</h3>
+					<h3>Solving I/O Bound Problems</h3>
 					<p>
 						<small>Created by Evan Oxfeld / <a href="http://twitter.com/evanoxfeld">@evanoxfeld</a></small>
 					</p>
+
+					<aside class="notes" data-markdown>
+						* Show of hands if you've tried NodeJS
+						* Show of hands if you've done any async programming
+
+						## NodeJS
+						* Server-side JS platform built on Chrome's V8 engine
+						* Easily build fast, scalable network applications
+						* Event-driven, non-blocking	
+
+						## I/O bound problems
+
+						* E.g. database, LDAP, REST call, call to ext. service
+						* You're reading from / writing to slow interfaces
+						* I/O bound if the interfaces, not the CPU, not memory
+						  constrains the problem
+					</aside>
 				</section>
 
 				<section>
-					<h2>Goal</h2>
+					<h2>Overview</h2>
 					<ul>
-						<li>Writing Streams Today</li>
-						<li>Writing Streams Tomorrow (Today)</li>
+						<li>Explore I/O bound problems in Node</li>
+						<li>Explore Streams API</li>
 					</ul>
+
+					<aside class="notes" data-markdown>
+						You'll not only have the knowledge to use Streams, but also write your own
+					</aside>
+				</section>
+
+				<section>
+					<h2>Streams Example - Unzip</h2>
+
+					<pre><code>
+fs.createReadStream('path/to/archive.zip')
+  .pipe(unzip.Parse())
+  .pipe(fstream.Writer('output/path'));
+				</pre></code>
+
+					<aside class="notes" data-markdown>
+						* Similar to unix pipes
+						* Streams are readable, writable, or both
+					</aside>
+				</section>
+
+				<section data-markdown>
+					# Code!
+					### Behind the curtain
+				</section>
+
+				<section data-markdown>
+					## util.pump(readable, writable)
+
+					* Sets up event handlers for 'data', 'end'
+					* Ignores other events e.g. 'error', 'close'
+					* API limits customization, not chainable
 				</section>
 
 				<section>
 					<section>
-						<h2>Using Streams</h2>
-						<br>
-						<h4>
-							<span class="pipe-small-text">fs.createReadStream('zip path')</span>.pipe(
-							<span class="pipe-small-text">unzip.Extract( {path: 'output/path'} )</span>)
-						</h4>
-					</section>
+						<h2>Streams in 0.8</h2>
 
-					<section>
-						<h2>Using Streams</h2>
-						<br>
-						<h4>
-							<span class="pipe-small-text">fs.createReadStream('zip')</span>.pipe(
-							<span class="pipe-small-text">unzip.Parse()</span>).pipe(
-							<span class="pipe-small-text">fstream.Writer('out')</span>)
-						</h4>
-					</section>
+						<pre><code>
+	readable.pipe(duplex).pipe(writable)
+						</pre></code>
 
-					<section>
-						<h2>Using Streams</h2>
-						<br>
-						<h4>
-							<span class="pipe-small-text">readable stream</span>.pipe(
-							<span class="pipe-small-text"><span class="fragment">duplex stream</span></span>).pipe(
-							<span class="pipe-small-text">writable stream</span>)
-						</h4>
-
-						<aside class="notes">
-							pipe() returns the destination stream starting in Node 0.6
-						</aside>
-          </section>
-				</section>
-
-				<section>
-					<h2>Readable Streams (Present)</h2>
-					<ul>
-						<li>Emit data events</li>
-						<li>Maybe implement pause() and resume()</li>
-					</ul>
-					<br><br>
-					<h3 class="fragment">Issues</h3>
-					<ul>
-						<li class="fragment">No on.('pipe') method</li>
-						<li class="fragment">pause() isn't a guarantee</li>
-					</ul>
-				</section>
-
-				<section>
-					<section>
-						<h2>Writable Streams (Present)</h2>
-						<ul>
-							<li>Implement write() and end()</li>
-						</ul>
-						<br><br>
-						<h3 class="fragment">Issues</h3>
-						<ul class="fragment">
-							<li>Backpressure</li>
-							<li>Hope the source stream buffers</li>
-						</ul>
-
-						<aside class="notes">
-							To exert backpressure, return false. To resume, emit 'drain' 
+						<aside class="notes" data-markdown>
+							* Looks more like JavaScript - pipes are chainable
+							* 0.8 was the stable version of node prior to 3/11/2013
 						</aside>
 					</section>
 
+					<section data-markdown>
+						## Streams in 0.8
+
+						* Readable
+							* Emit data events
+							* Maybe implement pause() and resume()
+						* Writable
+							* Implement write() and end()
+					</section>
+
+					<section data-markdown>
+						## Awesome! Let's demo!
+					</section>
+				</section>
+
+				<section>
 					<section>
-						<h2>Backpressure</h2>
+						<h2>Issues - Backpressure</h2>
 						<br><br>
 						<h3>
 							<span class="pipe">Readable</span>
 							<span class="pipe">Writable</span>
-					  </h3>
+						</h3>
+
+						<aside class="notes" data-markdown>
+							## What happened?
+
+							* Naive implementation didn't handle buffering and backpresure
+							* Backpressure - stream signals to its source to stop sending data
+						</aside>
 					</section>
 
 					<section>
-						<h2>Backpressure</h2>
+						<h2>Issues - Backpressure</h2>
 						<br><br>
 						<h3>
 							<span class="pipe">Readable</span>
 							<span class="pipe-large">Writable</span>
-					  </h3>
+						</h3>
+
+						<aside class="notes" data-markdown>
+							write() returns false; stream is full
+						</aside>
 					</section>
 					<section>
-						<h2>Backpressure</h2>
+						<h2>Issues - Backpressure</h2>
 						<br><br>
 						<h3>
 							<span class="pipe-large">Readable</span>
 							<span class="pipe">Writable</span>
 					  </h3>
+						<aside class="notes" data-markdown>
+							Writable emits 'drain' to signal it's ok to resume
+						</aside>
 					</section>
 
 					<section>
-						<h2>Demo</h2>
+						<h2>Issues - Backpressure</h2>
 						<img src="images/flood.jpg" alt="Flood">
 					</section>
+        </section>
+
+				<section>
+					<h2>More Issues</h2>
+					<ul>
+						<li>Buffering and backpressure</li>
+						<li class="fragment">No on.('pipe') method</li>
+						<li class="fragment">pause() isn't a guarantee</li>
+					</ul>
+
+					<aside class="notes" data-markdown>
+						* Backpressure is a dance, hyperactivity is bad
+						* Data events start immediately
+					</aside>
 				</section>
 
 				<section>
-					<h2>Enter "Streams2"</h2>
+					<h2>Streams of Tomorrow, Finally Here</h2>
 					<h4>Streams in 0.10</h4>
 					<ul>
 						<li>Readable streams are now suck streams</li>
 						<li class="fragment">read([size]) is equivalent to write(data)</li>
 						<ul class="fragment">
 							<li>read() returns null if less data is buffered than size</li>
-							<li>write() continues to return false if the buffer is full</li>
+							<li>write() return false or pass a callback</li>
 						</ul>
-						<li class="fragment">Can use Readable to wrap old-style streams</li>
-						<li class="fragment">Same friendly pipe API</li>
+						<li class="fragment">Object mode</li>
+						<li class="fragment">Same composable pipe API</li>
+						<li class="fragment">Shared base classes for backpressure and buffering</li>
 					</ul>
+
+					<aside class="notes">
+						highWaterMark option (16kb default) determines how much data is buffered
+					</aside>
 			  </section>
 
 				<section>
-					<h2>Writing 0.10 Streams</h2>
+					<h2>Streams 0.10 Base Classes</h2>
 					<ul>
-						<li>Readable: implement _read(size, cb)</li>
-						<li>Writable: implement _write(data, cb)</li>
-						<li class="fragment">Duplex: implement _read() and _write()</li>
-						<li class="fragment">Transform: implement _transform(data, outputFn, cb)</li>
+						<li>Readable, Writable, Duplex</li>
+						<li class="fragment">Transform: implement _transform(chunk, encoding, cb)</li>
 						<li class="fragment">PassThrough: no method to implement</li>
 					</ul>
+
+					<aside class="notes">
+						Transform - output connected somewhat to input. Saves implementing both
+							_read() and _write()
+					</aside>
+				</section>
+
+				<section data-markdown>
+					# Example stream.Transform Code!
 				</section>
 
 				<section>
-					<h2>unzip.Parse</h2>
-
-					<pre><code>
-Parse.prototype._transform = function (data, outputFn, callback) {
-  if (this._pullStream.write(data)) {
-    return callback();
-  }
-
-  this._pullStream.once('drain', callback);
-};
-					</code></pre>
+					<h1>Unzip Demo</h1>
 				</section>
 
-				<section>
-					<h1>Demo</h1>
-				</section>
+				<section data-markdown>
+					## Conclusions
 
-				<section>
-					<h2>Use Streams2 Today</h2>
-					<h4>
-						<a href="https://npmjs.org/package/readable-stream">readable-stream on NPM</a>
-					</h4>
-
-					<pre><code>
-var Transform = require('stream').Transform;
-
-if (!Transform) {
-    Transform = require('readable-stream/transform');
-}
-
-					</code></pre>
+					* Stream API is great for solving I/O bound problems
+					* Streams2 developed in the open with a parallel
+					<a href="https://npmjs.org/package/readable-stream">user-land module</a>
 				</section>
 
 				<section>
@@ -248,6 +278,7 @@ if (!Transform) {
 							<a href="https://github.com/substack/stream-handbook">Stream Handbook</a><br>
 							Substack
 						</li>
+						<li class="fragment">Ben Kelly</li>
 					</ul>
 				</section>
 
