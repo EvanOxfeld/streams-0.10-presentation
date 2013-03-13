@@ -141,7 +141,7 @@ fs.createReadStream('path/to/archive.zip')
 
 						* Readable
 							* Emit data events
-							* Maybe implement pause() and resume()
+							* Optionally implement pause() and resume()
 						* Writable
 							* Implement write() and end()
 					</section>
@@ -208,7 +208,8 @@ fs.createReadStream('path/to/archive.zip')
 
 					<aside class="notes" data-markdown>
 						* Backpressure is a dance, hyperactivity is bad
-						* Data events start immediately
+						* Data events start immediately (big problem at scale)
+						  * Data starts before event handlers set up
 					</aside>
 				</section>
 
@@ -254,12 +255,21 @@ fs.createReadStream('path/to/archive.zip')
 					<h1>Unzip Demo</h1>
 				</section>
 
-				<section data-markdown>
-					## Conclusions
+				<section>
+					<h2>Conclusions</h2>
 
-					* Stream API is great for solving I/O bound problems
-					* Streams2 developed in the open with a parallel
-					<a href="https://npmjs.org/package/readable-stream">user-land module</a>
+					<ul>
+						<li>Stream API is great for solving I/O bound problems</li>
+						<li>Streams2 developed in the open with a parallel
+							<a href="https://npmjs.org/package/readable-stream">user-land module</a>
+						</li>
+					</ul>
+					<aside class="notes" data-markdown>
+						* Now you can use and write streams.
+						* If you have an I/O bound problem
+						  * Can you leverage NodeJS to solve it?
+							* Or think about what's possible with your current languages/platforms
+					</aside>
 				</section>
 
 				<section>
