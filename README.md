@@ -1,7 +1,27 @@
-# nic-streams-presentation
+# NodeJS Streams - Solving I/O Bound Problems
 
 These are the slides from my NodeJS Streams talk at 
-[@NearInfinity](http://twitter.com/nearinfinity) / [@Invertix](http://twitter.com/Invertix) on 3/13/2013.
+[@NearInfinity](http://twitter.com/nearinfinity) / 
+[@Invertix](http://twitter.com/Invertix) on 3/13/2013 based on my experiences
+writing an [unzip](https://github.com/nearinfinity/node-unzip) parser with the
+Node 0.10 ["Streams2" API](http://blog.nodejs.org/2012/12/20/streams2/).
+Topics included event-driven programming in Node, using Streams, and writing
+custom Streams. I also explored some of the conceptual underpinnings required
+to solve streaming problems, including buffering and backpressure.
+
+## View the Slides
+
+http://evanoxfeld.github.com/streams-0.10-presentation
+
+## Node Modules Referenced
+The unzip and match-stream modules are streaming libraries that have
+been written using the "Streams2" API. Both modules depend on the
+[readable-stream](https://github.com/isaacs/readable-stream) module for
+Node 0.8 compatibility. Install unzip and match-stream using NPM or see
+the links to the source code below:
+
+* [unzip](https://github.com/nearinfinity/node-unzip)
+* [match-stream](https://github.com/EvanOxfeld/match-stream)
 
 ## Reveal.js
 
